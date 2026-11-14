@@ -1,500 +1,67 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>واجهات — منصة الأدوات الرقمية لقطاع التشطيبات</title>
-  <meta name="description" content="منصة واجهات — أدوات رقمية متخصصة لقطاع التشطيبات والديكور. حاسبة المطابخ، الكلادينج، الألومنيوم، والدهانات." />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-    :root {
-      --bg:        #0C0F14;
-      --surface:   #13181F;
-      --border:    #1E2530;
-      --gold:      #C9A84C;
-      --gold-dim:  #8B6E2E;
-      --white:     #F0EDE8;
-      --muted:     #6B7280;
-      --soon:      #1E2530;
-    }
-
-    html { scroll-behavior: smooth; }
-
-    body {
-      background: var(--bg);
-      color: var(--white);
-      font-family: 'Cairo', sans-serif;
-      min-height: 100vh;
-      overflow-x: hidden;
-    }
-
-    /* ── NAV ── */
-    nav {
-      position: fixed;
-      top: 0; left: 0; right: 0;
-      z-index: 100;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 40px;
-      height: 60px;
-      background: rgba(12, 15, 20, 0.85);
-      backdrop-filter: blur(12px);
-      border-bottom: 1px solid var(--border);
-    }
-
-    .nav-brand {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      text-decoration: none;
-    }
-
-    .nav-logo {
-      width: 32px;
-      height: 32px;
-      background: var(--gold);
-      border-radius: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 900;
-      font-size: 16px;
-      color: var(--bg);
-    }
-
-    .nav-name {
-      font-size: 16px;
-      font-weight: 700;
-      color: var(--white);
-      letter-spacing: -0.3px;
-    }
-
-    .nav-name span {
-      color: var(--gold);
-      font-weight: 300;
-      font-size: 12px;
-      margin-right: 6px;
-      font-family: 'Inter', sans-serif;
-    }
-
-    .nav-links {
-      display: flex;
-      align-items: center;
-      gap: 28px;
-      list-style: none;
-    }
-
-    .nav-links a {
-      color: var(--muted);
-      text-decoration: none;
-      font-size: 13px;
-      font-weight: 500;
-      transition: color 0.2s;
-    }
-
-    .nav-links a:hover { color: var(--white); }
-
-    /* ── HERO ── */
-    .hero {
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      padding: 80px 24px 60px;
-      position: relative;
-      overflow: hidden;
-    }
-
-    /* خط ذهبي مائل كعنصر توقيع */
-    .hero::before {
-      content: '';
-      position: absolute;
-      top: -100px;
-      left: 50%;
-      transform: translateX(-50%) rotate(-15deg);
-      width: 1px;
-      height: 400px;
-      background: linear-gradient(to bottom, transparent, var(--gold-dim), transparent);
-      opacity: 0.4;
-    }
-
-    .hero-eyebrow {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      background: rgba(201, 168, 76, 0.08);
-      border: 1px solid rgba(201, 168, 76, 0.2);
-      color: var(--gold);
-      font-size: 12px;
-      font-weight: 600;
-      padding: 5px 14px;
-      border-radius: 100px;
-      margin-bottom: 28px;
-      letter-spacing: 0.5px;
-    }
-
-    .hero-eyebrow::before {
-      content: '';
-      width: 6px;
-      height: 6px;
-      background: var(--gold);
-      border-radius: 50%;
-      animation: pulse 2s infinite;
-    }
-
-    @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.3; }
-    }
-
-    .hero h1 {
-      font-size: clamp(42px, 8vw, 80px);
-      font-weight: 900;
-      letter-spacing: -2px;
-      line-height: 1.05;
-      margin-bottom: 8px;
-      color: var(--white);
-    }
-
-    .hero h1 .gold { color: var(--gold); }
-
-    .hero-sub {
-      font-family: 'Inter', sans-serif;
-      font-size: 13px;
-      font-weight: 300;
-      color: var(--muted);
-      letter-spacing: 3px;
-      text-transform: uppercase;
-      margin-bottom: 20px;
-    }
-
-    .hero p {
-      font-size: 16px;
-      color: var(--muted);
-      font-weight: 400;
-      max-width: 480px;
-      line-height: 1.8;
-      margin-bottom: 48px;
-    }
-
-    .hero-cta {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      background: var(--gold);
-      color: var(--bg);
-      font-family: 'Cairo', sans-serif;
-      font-weight: 700;
-      font-size: 14px;
-      padding: 12px 28px;
-      border-radius: 10px;
-      text-decoration: none;
-      transition: all 0.2s;
-    }
-
-    .hero-cta:hover {
-      background: #D4B05A;
-      transform: translateY(-1px);
-      box-shadow: 0 8px 24px rgba(201, 168, 76, 0.25);
-    }
-
-    /* ── DIVIDER ── */
-    .divider {
-      width: 100%;
-      max-width: 900px;
-      margin: 0 auto;
-      height: 1px;
-      background: linear-gradient(to right, transparent, var(--border), transparent);
-    }
-
-    /* ── PRODUCTS ── */
-    .products {
-      padding: 80px 24px;
-      max-width: 1000px;
-      margin: 0 auto;
-    }
-
-    .section-label {
-      text-align: center;
-      font-size: 11px;
-      font-weight: 600;
-      letter-spacing: 3px;
-      text-transform: uppercase;
-      color: var(--gold);
-      margin-bottom: 12px;
-      font-family: 'Inter', sans-serif;
-    }
-
-    .section-title {
-      text-align: center;
-      font-size: 28px;
-      font-weight: 700;
-      color: var(--white);
-      margin-bottom: 48px;
-      letter-spacing: -0.5px;
-    }
-
-    .products-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 16px;
-    }
-
-    /* بطاقة متاحة */
-    .product-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 28px 24px;
-      text-decoration: none;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      transition: all 0.2s;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .product-card:hover {
-      border-color: var(--gold-dim);
-      transform: translateY(-2px);
-      box-shadow: 0 12px 32px rgba(0,0,0,0.3);
-    }
-
-    .product-card::after {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 2px;
-      background: linear-gradient(to right, var(--gold), transparent);
-      opacity: 0;
-      transition: opacity 0.2s;
-    }
-
-    .product-card:hover::after { opacity: 1; }
-
-    /* بطاقة قريباً */
-    .product-card.soon {
-      background: rgba(19, 24, 31, 0.4);
-      border-color: var(--soon);
-      cursor: default;
-      pointer-events: none;
-    }
-
-    .product-card.soon:hover { transform: none; box-shadow: none; }
-
-    .product-icon {
-      width: 44px;
-      height: 44px;
-      border-radius: 12px;
-      background: rgba(201, 168, 76, 0.1);
-      border: 1px solid rgba(201, 168, 76, 0.15);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 20px;
-    }
-
-    .product-card.soon .product-icon {
-      background: rgba(30, 37, 48, 0.8);
-      border-color: var(--border);
-    }
-
-    .product-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: 0.5px;
-      padding: 3px 8px;
-      border-radius: 100px;
-      width: fit-content;
-    }
-
-    .badge-live {
-      background: rgba(16, 185, 129, 0.1);
-      border: 1px solid rgba(16, 185, 129, 0.2);
-      color: #10B981;
-    }
-
-    .badge-live::before {
-      content: '';
-      width: 5px;
-      height: 5px;
-      background: #10B981;
-      border-radius: 50%;
-      animation: pulse 2s infinite;
-    }
-
-    .badge-soon {
-      background: rgba(107, 114, 128, 0.1);
-      border: 1px solid rgba(107, 114, 128, 0.15);
-      color: var(--muted);
-    }
-
-    .product-name {
-      font-size: 17px;
-      font-weight: 700;
-      color: var(--white);
-      letter-spacing: -0.3px;
-    }
-
-    .product-card.soon .product-name { color: var(--muted); }
-
-    .product-desc {
-      font-size: 13px;
-      color: var(--muted);
-      line-height: 1.7;
-      font-weight: 400;
-    }
-
-    .product-arrow {
-      margin-top: auto;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 12px;
-      font-weight: 600;
-      color: var(--gold);
-    }
-
-    /* ── FOOTER ── */
-    footer {
-      border-top: 1px solid var(--border);
-      padding: 32px 40px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 12px;
-    }
-
-    .footer-brand {
-      font-size: 14px;
-      font-weight: 700;
-      color: var(--white);
-    }
-
-    .footer-brand span {
-      color: var(--gold);
-    }
-
-    footer p {
-      font-size: 12px;
-      color: var(--muted);
-    }
-
-    /* ── RESPONSIVE ── */
-    @media (max-width: 640px) {
-      nav { padding: 0 20px; }
-      .nav-links { display: none; }
-      footer { padding: 24px 20px; flex-direction: column; text-align: center; }
-    }
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0C0F14">
+<meta name="description" content="واجهات — أدوات رقمية متخصصة لمحترفي المطابخ والكلادينج والتشطيبات. اكتشف تطبيقاتنا وتواصل معنا.">
+<title>واجهات | WAJHAT — أدوات احترافية للتشطيبات</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{color-scheme:dark;--bg:#0c0f14;--panel:#151a21;--panel2:#1b222b;--gold:#c9a84c;--goldbright:#e2c477;--text:#f0ede8;--muted:#aab0ba;--line:#303741}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;min-width:280px;background:radial-gradient(ellipse at 82% 0%,#2a271e 0%,transparent 45%),var(--bg);color:var(--text);font-family:Cairo,system-ui,sans-serif;overflow-x:hidden}a{color:inherit;text-decoration:none}button,a{touch-action:manipulation}a:focus-visible,button:focus-visible{outline:2px solid var(--goldbright);outline-offset:3px}
+.shell{width:min(1450px,100%);margin:auto;padding-inline:clamp(16px,3.2vw,48px)}
+.page{min-height:100dvh;display:grid;grid-template-rows:auto 1fr auto}
+.header{border-bottom:1px solid var(--line);background:#0c0f14d9}.header .shell{min-height:67px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.brand{display:flex;align-items:center;gap:12px;white-space:nowrap}.mark{display:grid;place-items:center;width:39px;height:39px;border-radius:12px;background:linear-gradient(145deg,#f0d58e,var(--gold));color:#151515;font-weight:900;font-size:23px}.brand strong{font-size:22px;line-height:1}.brand small{display:block;direction:ltr;text-align:right;font:500 10px Inter,sans-serif;letter-spacing:2px;color:var(--gold);margin-top:5px}
+.nav{display:flex;align-items:center;gap:clamp(12px,2vw,30px);font-size:13px;color:var(--muted)}.nav a:hover,.nav a:focus{color:var(--goldbright)}.header-contact{border:1px solid #7b6638;padding:8px 14px;border-radius:9px;color:var(--goldbright)!important;white-space:nowrap}
+.main{display:flex;flex-direction:column;justify-content:center;gap:clamp(12px,2vh,24px);padding-block:clamp(13px,2.3vh,26px)}
+.hero{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(240px,.8fr);align-items:center;gap:clamp(20px,5vw,70px)}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;color:var(--goldbright);font-size:12px;font-weight:700}.dot{width:7px;height:7px;background:var(--gold);border-radius:50%}
+h1,h2,h3,p{margin:0}.hero h1{font-size:clamp(28px,3.6vw,58px);line-height:1.36;letter-spacing:-1px;margin:6px 0}.hero h1 em{font-style:normal;color:var(--gold)}.hero p{font-size:clamp(12px,1.06vw,15px);line-height:1.85;color:var(--muted);max-width:620px}
+.actions{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-top:14px}.btn{min-height:40px;display:inline-flex;align-items:center;justify-content:center;gap:8px;border:1px solid var(--line);padding:8px 16px;border-radius:10px;font-weight:700;font-size:12px;white-space:nowrap}.btn.primary{background:var(--gold);color:#121313;border-color:var(--gold)}.btn:hover{filter:brightness(1.12)}
+.hero-art{position:relative;border:1px solid #554931;border-radius:21px;background:linear-gradient(138deg,#212426 5%,#151a20 55%,#2a241b);min-height:clamp(145px,23vh,245px);padding:20px;display:flex;align-items:center;justify-content:center;overflow:hidden}.hero-art:before{content:"";position:absolute;width:260px;height:260px;border:1px solid #c9a84c29;border-radius:50%;box-shadow:0 0 0 45px #c9a84c0c,0 0 0 95px #c9a84c07}.art-inner{z-index:1;display:grid;grid-template-columns:repeat(3,42px);gap:8px;transform:rotate(-12deg)}.art-inner i{height:77px;background:linear-gradient(145deg,#e0c079,#806128);border-radius:5px;box-shadow:8px 9px 0 #080b0e66}.art-inner i:nth-child(2),.art-inner i:nth-child(6){background:linear-gradient(145deg,#707b86,#303842)}.art-inner i:nth-child(3),.art-inner i:nth-child(4){background:linear-gradient(145deg,#b6aaa0,#5b534c)}.art-caption{position:absolute;bottom:10px;left:15px;font:600 11px Inter,sans-serif;letter-spacing:2px;color:#d5bd84}
+.section-head{display:flex;justify-content:space-between;align-items:end;gap:16px;margin-bottom:10px}.section-head h2{font-size:clamp(17px,1.5vw,22px)}.section-head p{font-size:11px;color:var(--muted)}
+.products{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}.product{min-width:0;display:flex;flex-direction:column;gap:6px;min-height:clamp(136px,17vh,185px);padding:clamp(12px,1.5vw,20px);border:1px solid var(--line);border-radius:14px;background:linear-gradient(150deg,#1b2128,#11161c);transition:border-color .2s,transform .2s}.product[href]:hover{border-color:var(--gold);transform:translateY(-2px)}.product.soon{opacity:.68}.product-top{display:flex;justify-content:space-between;gap:8px;align-items:center}.product-icon{font-size:22px}.status{border:1px solid #4e664d;border-radius:30px;padding:2px 8px;font-size:10px;color:#b0dfad;white-space:nowrap}.soon .status{border-color:#4b5159;color:#c1c3c8}.product h3{font-size:clamp(13px,1.23vw,17px)}.product p{font-size:clamp(10px,.9vw,12px);line-height:1.65;color:var(--muted)}.product-link{font-size:11px;font-weight:700;color:var(--goldbright);margin-top:auto}
+.bottom{display:grid;grid-template-columns:1fr 1fr;gap:12px}.panel{border:1px solid var(--line);border-radius:13px;background:#141920;padding:13px 18px;min-width:0}.panel h2{font-size:15px;margin-bottom:4px}.panel p{font-size:11px;color:var(--muted);line-height:1.7}.panel .links{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}.chip{border:1px solid #554931;border-radius:8px;padding:5px 11px;font-size:11px;color:var(--goldbright)}.chip:hover{background:#2b261d}.stars{font-size:17px;letter-spacing:1px;color:var(--gold);margin-bottom:3px}.review-note{font-size:10px;color:var(--muted)}
+.footer{border-top:1px solid var(--line);color:var(--muted)}.footer .shell{display:flex;justify-content:space-between;align-items:center;gap:12px;min-height:44px;font-size:10px}.footer strong{color:var(--goldbright)}
+@media (min-width:1000px) and (min-height:690px){.page{height:100dvh;min-height:690px}.main{min-height:0}}
+@media (max-width:900px){.hero{grid-template-columns:1fr .55fr}.products{grid-template-columns:repeat(2,minmax(0,1fr))}.product{min-height:135px}}
+@media (max-width:620px){.header .shell{min-height:60px}.nav{gap:10px}.nav .products-nav{display:none}.brand strong{font-size:18px}.hero{grid-template-columns:1fr}.hero-art{display:none}.main{justify-content:flex-start;padding-block:22px}.hero h1{font-size:clamp(27px,8vw,39px)}.products{gap:9px}.product{padding:12px;min-height:150px}.bottom{grid-template-columns:1fr}.footer .shell{flex-wrap:wrap;padding-block:12px}.section-head{align-items:start}.section-head p{max-width:135px;text-align:left}}
+@media (max-width:350px){.products{grid-template-columns:1fr}.brand small{letter-spacing:1px}}
+@media (prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;transition:none!important}}
+</style>
 </head>
 <body>
-
-  <!-- NAV -->
-  <nav>
-    <a href="/" class="nav-brand">
-      <div class="nav-logo">و</div>
-      <div class="nav-name">
-        واجهات
-        <span>WAJHAT</span>
-      </div>
-    </a>
-    <ul class="nav-links">
-      <li><a href="#products">المنتجات</a></li>
-      <li><a href="mailto:aymenasfour@gmail.com">تواصل معنا</a></li>
-    </ul>
-  </nav>
-
-  <!-- HERO -->
-  <section class="hero">
-    <div class="hero-eyebrow">منصة أدوات التشطيبات الرقمية</div>
-    <p class="hero-sub">Wajhat Digital Platform</p>
-    <h1>أدوات تقنية<br /><span class="gold">لقطاع التشطيبات</span></h1>
-    <p>
-      منصة واجهات تقدم أدوات رقمية متخصصة لمحترفي التشطيبات والديكور —
-      من حساب قوائم التقطيع إلى إدارة مشاريع الكلادينج والألومنيوم.
-    </p>
-    <a href="#products" class="hero-cta">استكشف الأدوات</a>
-  </section>
-
-  <div class="divider"></div>
-
-  <!-- PRODUCTS -->
-  <section class="products" id="products">
-    <p class="section-label">أدواتنا</p>
-    <h2 class="section-title">كل ما تحتاجه في مكان واحد</h2>
-
-    <div class="products-grid">
-
-      <!-- حاسبة المطابخ -->
-      <a href="https://kitchen.wajhat.co" class="product-card">
-        <div class="product-icon">🪵</div>
-        <div class="product-badge badge-live">متاح الآن</div>
-        <div class="product-name">حاسبة المطابخ</div>
-        <p class="product-desc">
-          احسب قوائم التقطيع، شريط الحواف، والإكسسوارات لمشاريع المطابخ الخشبية بدقة احترافية.
-        </p>
-        <div class="product-arrow">
-          ابدأ الاستخدام
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-        </div>
-      </a>
-
-      <!-- الكلادينج -->
-      <a href="https://cladding.wajhat.co" class="product-card">
-        <div class="product-icon">🏗️</div>
-        <div class="product-badge badge-live">متاح الآن</div>
-        <div class="product-name">حاسبة الكلادينج</div>
-        <p class="product-desc">
-          إدارة مشاريع الكلادينج الخارجي والداخلي، حساب الكميات والتكاليف بسهولة.
-        </p>
-        <div class="product-arrow">
-          ابدأ الاستخدام
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-        </div>
-      </a>
-
-      <!-- الألومنيوم -->
-      <div class="product-card soon">
-        <div class="product-icon">⚙️</div>
-        <div class="product-badge badge-soon">قريباً</div>
-        <div class="product-name">حاسبة الألومنيوم</div>
-        <p class="product-desc">
-          حسابات متخصصة لمشاريع الألومنيوم — واجهات، نوافذ، أبواب، وأنظمة الستائر الزجاجية.
-        </p>
-      </div>
-
-      <!-- الدهانات -->
-      <div class="product-card soon">
-        <div class="product-icon">🎨</div>
-        <div class="product-badge badge-soon">قريباً</div>
-        <div class="product-name">حاسبة الدهانات</div>
-        <p class="product-desc">
-          احسب كميات الدهانات بدقة لأي مساحة، مع مقارنة الأسعار وتقدير التكلفة الإجمالية.
-        </p>
-      </div>
-
-    </div>
-  </section>
-
-  <!-- FOOTER -->
-  <footer>
-    <div class="footer-brand">واجهات <span>|</span> Wajhat</div>
-    <p>منصة الأدوات الرقمية لقطاع التشطيبات والديكور</p>
-    <p>© 2026 جميع الحقوق محفوظة</p>
-  </footer>
-
+<div class="page">
+<header class="header">
+ <div class="shell">
+  <a class="brand" href="/" aria-label="واجهات — الرئيسية"><span class="mark">و</span><span><strong>واجهات</strong><small>WAJHAT</small></span></a>
+  <nav class="nav" aria-label="القائمة الرئيسية"><a class="products-nav" href="#products">المنتجات</a><a href="#reviews">آراء العملاء</a><a class="header-contact" href="#contact">تواصل معنا</a></nav>
+ </div>
+</header>
+<main class="main shell">
+ <section class="hero" aria-labelledby="hero-title">
+  <div><div class="eyebrow"><span class="dot"></span> منصة أدوات التشطيبات الرقمية</div><h1 id="hero-title">حلول رقمية <em>أذكى</em><br>لأعمال التشطيبات</h1><p>أدوات عملية للمهندسين والمصممين والمصنّعين، تساعدك على حساب الكميات وإعداد المشاريع بدقة وسرعة — من المطابخ إلى الكلادينج.</p><div class="actions"><a class="btn primary" href="#products">استكشف تطبيقاتنا ←</a><a class="btn" href="https://wa.me/201226288899" target="_blank" rel="noopener noreferrer">تحدث معنا عبر واتساب</a></div></div>
+  <div class="hero-art" aria-hidden="true"><div class="art-inner"><i></i><i></i><i></i><i></i><i></i><i></i></div><span class="art-caption">WAJHAT DIGITAL</span></div>
+ </section>
+ <section id="products" aria-labelledby="products-title">
+  <div class="section-head"><h2 id="products-title">تطبيقات واجهات</h2><p>حلول متخصصة تتطور مع احتياجات عملك</p></div>
+  <div class="products">
+   <a class="product" href="https://kitchen.wajhat.co"><div class="product-top"><span class="product-icon" aria-hidden="true">🪵</span><span class="status">متاح الآن</span></div><h3>حاسبة المطابخ</h3><p>قوائم التقطيع وشريط الحواف والإكسسوارات للمطابخ الخشبية.</p><span class="product-link">افتح التطبيق ←</span></a>
+   <a class="product" href="https://cladding.wajhat.co"><div class="product-top"><span class="product-icon" aria-hidden="true">🏗️</span><span class="status">متاح الآن</span></div><h3>حاسبة الكلادينج</h3><p>حساب كميات مشروعات الكلادينج وإدارة تفاصيلها.</p><span class="product-link">افتح التطبيق ←</span></a>
+   <div class="product soon"><div class="product-top"><span class="product-icon" aria-hidden="true">⚙️</span><span class="status">قريبًا</span></div><h3>حاسبة الألومنيوم</h3><p>أدوات متخصصة للواجهات والأبواب والنوافذ.</p></div>
+   <div class="product soon"><div class="product-top"><span class="product-icon" aria-hidden="true">🎨</span><span class="status">قريبًا</span></div><h3>حاسبة الدهانات</h3><p>تقدير الكميات والتكلفة لمشروعات الدهانات.</p></div>
+  </div>
+ </section>
+ <div class="bottom">
+  <section class="panel" id="reviews" aria-labelledby="reviews-title"><h2 id="reviews-title">آراء عملائنا</h2><p>نشارك هنا التجارب الحقيقية والمراجعات الموثقة لمستخدمي تطبيقات واجهات. لم تُنشر تقييمات موثقة بعد.</p><div class="links"><a class="chip" href="https://wa.me/201226288899?text=%D8%A3%D8%B1%D9%8A%D8%AF%20%D9%85%D8%B4%D8%A7%D8%B1%D9%83%D8%A9%20%D8%B1%D8%A3%D9%8A%D9%8A%20%D9%81%D9%8A%20%D8%AA%D8%B7%D8%A8%D9%8A%D9%82%D8%A7%D8%AA%20%D9%88%D8%A7%D8%AC%D9%87%D8%A7%D8%AA" target="_blank" rel="noopener noreferrer">شارك تجربتك ★</a></div></section>
+  <section class="panel" id="contact" aria-labelledby="contact-title"><h2 id="contact-title">تواصل مع واجهات</h2><p>استفسارات التطبيقات، الدعم الفني، واقتراحات التطوير.</p><div class="links"><a class="chip" href="tel:+201226288899" dir="ltr">☎ 01226288899</a><a class="chip" href="https://wa.me/201226288899" target="_blank" rel="noopener noreferrer">واتساب</a><a class="chip" href="mailto:aymenasfour@gmail.com">البريد الإلكتروني</a></div></section>
+ </div>
+</main>
+<footer class="footer"><div class="shell"><span><strong>واجهات | WAJHAT</strong> — حلول رقمية لمحترفي التشطيبات</span><span>© 2026 جميع الحقوق محفوظة</span></div></footer>
+</div>
 </body>
 </html>
