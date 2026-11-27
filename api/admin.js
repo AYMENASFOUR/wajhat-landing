@@ -32,6 +32,14 @@ function config(res){
  if(typeof v.sessionKey!=='string'||!(/^[a-fA-F0-9]{64}$/.test(v.sessionKey)))return fail('session_key_format');
  if(typeof v.totp!=='string'||!(/^[A-Z2-7]{32}$/.test(v.totp)))return fail('totp_format');
  const secret=base32(v.totp);if(!secret)return fail('totp_decode');
+ const replacement=process.env.WAJHAT_ADMIN_PASSWORD;
+ if(replacement!==undefined){
+  let p;try{p=JSON.parse(replacement)}catch{return fail('password_override_invalid')}
+  if(!p||p.v!==1||typeof p.salt!=='string'||!/^[a-f0-9]{32}$/.test(p.salt)||typeof p.verifier!=='string'||!/^[a-f0-9]{64}$/.test(p.verifier))return fail('password_override_invalid');
+  // Revoke sessions issued before password rotation without changing the enrolled TOTP.
+  const key=crypto.createHmac('sha256',Buffer.from(v.sessionKey,'hex')).update('password-rotation-v1:').update(p.salt).update(p.verifier).digest();
+  return {salt:Buffer.from(p.salt,'hex'),verifier:Buffer.from(p.verifier,'hex'),secret,key};
+ }
  return {salt:Buffer.from(saltHex,'hex'),verifier:Buffer.from(v.verifier,'hex'),secret,key:Buffer.from(v.sessionKey,'hex')};
  }catch{return fail('invalid_json')}
 }
