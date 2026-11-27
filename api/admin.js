@@ -18,9 +18,10 @@ function config(res){
  try{
  const v=JSON.parse(raw.trim().replace(/^\uFEFF/,''));
  if(!v||v.v!==1)return fail('version_or_structure');
- if(typeof v.salt!=='string'||!(/^[a-f0-9]{32}$/.test(v.salt)))return fail('salt_format');
- if(typeof v.verifier!=='string'||!(/^[a-f0-9]{64}$/.test(v.verifier)))return fail('verifier_format');
- if(typeof v.sessionKey!=='string'||!(/^[a-f0-9]{64}$/.test(v.sessionKey)))return fail('session_key_format');
+ if(typeof v.salt!=='string')return fail('salt_not_string');
+ if(!(/^[a-fA-F0-9]{32}$/.test(v.salt)))return fail(v.salt.length===32?'salt_non_hex':v.salt.length===24?'salt_length_24':v.salt.length===22?'salt_length_22':v.salt.length===64?'salt_length_64':'salt_other_length');
+ if(typeof v.verifier!=='string'||!(/^[a-fA-F0-9]{64}$/.test(v.verifier)))return fail('verifier_format');
+ if(typeof v.sessionKey!=='string'||!(/^[a-fA-F0-9]{64}$/.test(v.sessionKey)))return fail('session_key_format');
  if(typeof v.totp!=='string'||!(/^[A-Z2-7]{32}$/.test(v.totp)))return fail('totp_format');
  const secret=base32(v.totp);if(!secret)return fail('totp_decode');
  return {salt:Buffer.from(v.salt,'hex'),verifier:Buffer.from(v.verifier,'hex'),secret,key:Buffer.from(v.sessionKey,'hex')};
