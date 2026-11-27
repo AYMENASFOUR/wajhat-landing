@@ -11,7 +11,7 @@
 <meta property="og:url" content="https://www.wajhat.co/">
 <link rel="canonical" href="https://www.wajhat.co/">
 <title>واجهات | WAJHAT — برمجيات الأعمال</title>
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect width='48' height='48' rx='11' fill='%23142e45'/%3E%3Cpath d='M5 12h7l5 19 5-13h6l5 13 5-19h6L36 39h-6l-5-13-5 13h-7z' fill='white'/%3E%3Cpath d='M20 6h11v5H20z' fill='%23e7bd6a'/%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Cpath fill='%23909090' d='M1 1h22v22H1z'/%3E%3Cpath fill='%23d89050' d='M25 1h22v22H25z'/%3E%3Cpath fill='%23606060' d='M25 25h22v22H25z'/%3E%3Cpath fill='%23b06020' d='M1 25h22v22H1z'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&family=Inter:wght@500;600;700;800&display=swap" rel="stylesheet">
@@ -92,13 +92,139 @@ footer{background:#fff;color:#536779;font-size:12px}footer strong{color:#243f56}
 @media(max-width:620px){header .wrap{min-height:60px}.mark{width:39px;height:39px}.mark svg{width:30px;height:30px}.brand strong{font-size:20px}nav{font-size:12px;gap:10px}nav a:last-child{padding:6px 9px}.hero{display:block;padding:19px;border-radius:13px}.hero h1{font-size:clamp(26px,6.8vw,34px)}.hero p{font-size:14px}.hero .button{font-size:13px;padding-inline:11px}.hero-art{display:none}main{gap:16px;padding-block:14px}.section-head h2{font-size:22px}.controls input,.controls select{font-size:14px}.grid,.grid:has(> .app:nth-child(2):last-child){grid-template-columns:1fr}.app{padding:14px 16px;min-height:0;gap:6px}.app-icon{width:44px;height:44px}.app-icon svg{width:25px;height:25px}.app h3{font-size:18px}.app p{font-size:14px}.category{font-size:12px}.contact p{font-size:13px}.contact .actions{width:100%}.contact .button{flex:1 1 auto;padding-inline:9px}.contact h2{font-size:17px}footer{font-size:11px}}
 
 @media(min-width:1000px) and (max-height:800px){header .wrap{min-height:60px}footer .wrap{min-height:40px}main{gap:10px;padding-block:10px}.hero{padding:15px 25px}.hero h1{font-size:32px}.hero p{font-size:14px;line-height:1.65}.hero .actions{margin-top:9px}.section-head{margin-bottom:8px}.app{gap:5px;padding:11px 17px;min-height:165px}.app-icon{width:44px;height:44px}.app h3{font-size:18px}.app-link{padding-top:6px}.contact{padding-block:7px}}
+
+.wajhat-gulf-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* ── حركة المربعات ── */
+@keyframes wajhatGulfM1 {
+  0%,25%,100% { transform: translate(0,0); }
+  50%         { transform: translate(0, var(--wg-half)); }
+  75%         { transform: translate(var(--wg-half), var(--wg-half)); }
+}
+@keyframes wajhatGulfM2 {
+  0%,25%,100% { transform: translate(0,0); }
+  50%         { transform: translate(calc(-1 * var(--wg-half)), 0); }
+  75%         { transform: translate(calc(-1 * var(--wg-half)), var(--wg-half)); }
+}
+@keyframes wajhatGulfM3 {
+  0%,25%,100% { transform: translate(0,0); }
+  50%         { transform: translate(0, calc(-1 * var(--wg-half))); }
+  75%         { transform: translate(calc(-1 * var(--wg-half)), calc(-1 * var(--wg-half))); }
+}
+@keyframes wajhatGulfM4 {
+  0%,25%,100% { transform: translate(0,0); }
+  50%         { transform: translate(var(--wg-half), 0); }
+  75%         { transform: translate(var(--wg-half), calc(-1 * var(--wg-half))); }
+}
+
+/* ── حركة الـ flip ── */
+@keyframes wajhatGulfFlip {
+  0%,30%,100% { transform: rotateX(0deg) rotateY(0deg); }
+  65%         { transform: rotateX(180deg) rotateY(180deg); }
+}
+
+.wajhat-gulf-grid {
+  position: relative;
+  width:  var(--wg-size);
+  height: var(--wg-size);
+}
+
+.wajhat-gulf-cell {
+  position: absolute;
+  width:  var(--wg-half);
+  height: var(--wg-half);
+}
+.wajhat-gulf-cell-1 { top:0;    left:0;   z-index:1; animation: wajhatGulfM1 14s cubic-bezier(.6,.01,.4,1) infinite; }
+.wajhat-gulf-cell-2 { top:0;    right:0;             animation: wajhatGulfM2 14s cubic-bezier(.6,.01,.4,1) infinite; }
+.wajhat-gulf-cell-3 { bottom:0; right:0;  z-index:1; animation: wajhatGulfM3 14s cubic-bezier(.6,.01,.4,1) infinite; }
+.wajhat-gulf-cell-4 { bottom:0; left:0;              animation: wajhatGulfM4 14s cubic-bezier(.6,.01,.4,1) infinite; }
+
+.wajhat-gulf-cube-scene {
+  width: 100%; height: 100%;
+  perspective: 200px;
+}
+.wajhat-gulf-cube-inner {
+  width: 100%; height: 100%;
+  transform-style: preserve-3d;
+  animation: wajhatGulfFlip 28s cubic-bezier(.66,.14,.56,.75) infinite;
+}
+.wajhat-gulf-cell-1 .wajhat-gulf-cube-inner { animation-delay: 0ms; }
+.wajhat-gulf-cell-2 .wajhat-gulf-cube-inner { animation-delay: 700ms; }
+.wajhat-gulf-cell-3 .wajhat-gulf-cube-inner { animation-delay: 1400ms; }
+.wajhat-gulf-cell-4 .wajhat-gulf-cube-inner { animation-delay: 2100ms; }
+
+.wajhat-gulf-face {
+  position: absolute;
+  width: 100%; height: 100%;
+  backface-visibility: hidden;
+}
+.wajhat-gulf-face-front { transform: translateZ(1px); }
+.wajhat-gulf-face-back  { transform: rotateY(180deg) translateZ(1px); }
+
+.wajhat-gulf-cell-1 .wajhat-gulf-face-front { background: #909090; }
+.wajhat-gulf-cell-1 .wajhat-gulf-face-back  { background: #2a2a2a; }
+.wajhat-gulf-cell-2 .wajhat-gulf-face-front { background: #d89050; }
+.wajhat-gulf-cell-2 .wajhat-gulf-face-back  { background: #2a1500; }
+.wajhat-gulf-cell-3 .wajhat-gulf-face-front { background: #606060; }
+.wajhat-gulf-cell-3 .wajhat-gulf-face-back  { background: #404040; }
+.wajhat-gulf-cell-4 .wajhat-gulf-face-front { background: #b06020; }
+.wajhat-gulf-cell-4 .wajhat-gulf-face-back  { background: #804010; }
+
+/* ── النص ── */
+.wajhat-gulf-text {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+.wajhat-gulf-ar {
+  font-family: 'Scheherazade New', 'Cairo', serif;
+  font-weight: 700;
+  color: #2a2a2a;
+  letter-spacing: 0.05em;
+  line-height: 1.1;
+}
+.wajhat-gulf-ar-dark { color: #E6F1FB; }
+.wajhat-gulf-divider {
+  height: 1.5px;
+  background: linear-gradient(90deg, #909090, #b06020);
+  border-radius: 2px;
+  margin: 6px 0;
+}
+.wajhat-gulf-en {
+  font-family: 'Cinzel', 'Cairo', serif;
+  font-weight: 700;
+  letter-spacing: 0.36em;
+  text-transform: uppercase;
+  color: #804010;
+  line-height: 1;
+}
+.wajhat-gulf-en-dark { color: #d89050; }
+
+/* Adapt original Gulf 07 logo to the approved landing header. */
+.original-brand{--wg-size:44px;--wg-half:22px;gap:12px;flex-shrink:0}
+.original-brand .wajhat-gulf-grid,.original-brand .wajhat-gulf-cell,.original-brand .wajhat-gulf-cube-scene,.original-brand .wajhat-gulf-cube-inner,.original-brand .wajhat-gulf-face{display:block;direction:ltr}
+.original-brand .wajhat-gulf-grid{flex-shrink:0;isolation:isolate}
+.original-brand .wajhat-gulf-cube-inner{position:relative}
+.original-wordmark{display:flex;flex-direction:column;align-items:center;gap:3px}
+.original-brand .original-wordmark strong{font:700 25px/1.1 'Scheherazade New',Cairo,serif;color:#2a2a2a;white-space:nowrap}
+.original-brand .original-wordmark small{font:700 10px/1.2 Cinzel,Arial,serif;letter-spacing:2.6px;color:#804010;direction:ltr;margin:0;text-align:center}
+.original-divider{display:block;width:100%;height:1.5px;background:linear-gradient(90deg,#909090,#b06020)}
+@media(max-width:620px){.original-brand{--wg-size:36px;--wg-half:18px;gap:8px}.original-brand .original-wordmark strong{font-size:22px}.original-brand .original-wordmark small{font-size:9px;letter-spacing:2px}}
+@media(prefers-reduced-motion:reduce){.original-brand .wajhat-gulf-cell,.original-brand .wajhat-gulf-cube-inner{animation:none!important}}
+
 </style>
 <script src="./apps.js" defer></script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&amp;family=Scheherazade+New:wght@700&amp;display=swap">
 </head>
 <body>
 <div class="page">
 <header><div class="wrap">
-<a class="brand" href="/" aria-label="واجهات — الرئيسية"><span class="mark" aria-hidden="true"><svg viewBox="0 0 48 48" fill="none" aria-hidden="true"><path d="M6 11h8l5 19 5-13h7l5 13 5-19h7L38 39h-7l-4-13-5 13h-8L6 11Z" fill="currentColor"/><path d="M20 6h12v5H20z" fill="#e7bd6a"/></svg></span><span><strong>واجهات</strong><small>WAJHAT</small></span></a>
+<a class="brand original-brand" href="/" aria-label="واجهات — الرئيسية"><span class="wajhat-gulf-grid" aria-hidden="true"><span class="wajhat-gulf-cell wajhat-gulf-cell-1"><span class="wajhat-gulf-cube-scene"><span class="wajhat-gulf-cube-inner"><span class="wajhat-gulf-face wajhat-gulf-face-front"></span><span class="wajhat-gulf-face wajhat-gulf-face-back"></span></span></span></span><span class="wajhat-gulf-cell wajhat-gulf-cell-2"><span class="wajhat-gulf-cube-scene"><span class="wajhat-gulf-cube-inner"><span class="wajhat-gulf-face wajhat-gulf-face-front"></span><span class="wajhat-gulf-face wajhat-gulf-face-back"></span></span></span></span><span class="wajhat-gulf-cell wajhat-gulf-cell-3"><span class="wajhat-gulf-cube-scene"><span class="wajhat-gulf-cube-inner"><span class="wajhat-gulf-face wajhat-gulf-face-front"></span><span class="wajhat-gulf-face wajhat-gulf-face-back"></span></span></span></span><span class="wajhat-gulf-cell wajhat-gulf-cell-4"><span class="wajhat-gulf-cube-scene"><span class="wajhat-gulf-cube-inner"><span class="wajhat-gulf-face wajhat-gulf-face-front"></span><span class="wajhat-gulf-face wajhat-gulf-face-back"></span></span></span></span></span><span class="original-wordmark"><strong>واجهات</strong><span class="original-divider"></span><small>WAJHAT</small></span></a>
 <nav aria-label="القائمة الرئيسية"><a href="#products">التطبيقات</a><a href="#contact">تواصل معنا</a></nav>
 </div></header>
 <main class="wrap">
@@ -116,7 +242,7 @@ footer{background:#fff;color:#536779;font-size:12px}footer strong{color:#243f56}
 </section>
 <section class="contact" id="contact" aria-labelledby="contact-title"><div><h2 id="contact-title">كيف نساعدك؟</h2><p>استفسارات التطبيقات، الدعم الفني، واقتراحات التطوير.</p></div><div class="actions"><a class="button" href="tel:+201226288899" dir="ltr">01226288899</a><a class="button primary" href="https://wa.me/201226288899" target="_blank" rel="noopener noreferrer">واتساب</a><a class="button" href="mailto:aymenasfour@gmail.com">البريد الإلكتروني</a></div></section>
 </main>
-<footer><div class="wrap"><span><strong>واجهات | WAJHAT</strong> — برمجيات الأعمال</span><span>© <span id="year">2026</span> جميع الحقوق محفوظة · <bdi>v1.2.0</bdi></span></div></footer>
+<footer><div class="wrap"><span><strong>واجهات | WAJHAT</strong> — برمجيات الأعمال</span><span>© <span id="year">2026</span> جميع الحقوق محفوظة · <bdi>v1.2.1</bdi></span></div></footer>
 </div>
 <script>
 document.addEventListener('DOMContentLoaded',function(){
