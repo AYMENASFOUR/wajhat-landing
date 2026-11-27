@@ -12,10 +12,16 @@ function base32(s){
  if(n!==0)return null;return Buffer.from(bytes);
 }
 function config(){
- const password=process.env.WAJHAT_ADMIN_PASSWORD||'', seed=(process.env.WAJHAT_ADMIN_TOTP_SECRET||'').replace(/\s/g,'').toUpperCase(),secret=base32(seed);
- if(password.length<24||password.length>256||!secret)return null;
- const key=crypto.createHmac('sha256',secret).update('wajhat-admin-session-v1\0'+password).digest();
- return {password,secret,key};
+ try{
+ const v=JSON.parse(process.env.WAJHAT_ADMIN_AUTH||'null');
+ if(!v||v.v!==1||!(/^[a-f0-9]{32}$/.test(v.salt))||!(/^[a-f0-9]{64}$/.test(v.verifier))||!(/^[a-f0-9]{64}$/.test(v.sessionKey))||!(/^[A-Z2-7]{32}$/.test(v.totp)))return null;
+ const secret=base32(v.totp);if(!secret)return null;
+ return {salt:Buffer.from(v.salt,'hex'),verifier:Buffer.from(v.verifier,'hex'),secret,key:Buffer.from(v.sessionKey,'hex')};
+ }catch{return null}
+}
+function validPassword(cfg,password){
+ const derived=crypto.pbkdf2Sync(password,cfg.salt,600000,32,'sha256');
+ return crypto.timingSafeEqual(derived,cfg.verifier);
 }
 function otp(secret,step){
  const buf=Buffer.alloc(8);buf.writeBigUInt64BE(BigInt(step));
@@ -90,7 +96,7 @@ function handler(req,res){
  if(data.action==='logout'){setCookie(res,'',0);res.statusCode=303;res.setHeader('Location','/admin');return res.end()}
  if(data.action!=='login'||typeof data.password!=='string'||data.password.length>256||typeof data.otp!=='string')return send(res,400,login('طلب غير صالح.'));
  if(!throttle(req)){res.setHeader('Retry-After','300');return send(res,429,login('محاولات كثيرة. حاول لاحقًا.'))}
- const okPass=equal(data.password,cfg.password),okOtp=validOtp(cfg.secret,data.otp);
+ const okPass=validPassword(cfg,data.password),okOtp=validOtp(cfg.secret,data.otp);
  if(!okPass||!okOtp)return send(res,401,login('تعذر تسجيل الدخول. تحقق من بيانات المصادقة.'));
  setCookie(res,issue(cfg.key),TTL);res.statusCode=303;res.setHeader('Location','/admin');return res.end();
 }
