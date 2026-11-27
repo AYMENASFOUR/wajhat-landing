@@ -6,7 +6,7 @@ const pw='test-fixture-not-a-real-password-1234',seed='GEZDGNBVGY3TQOJQGEZDGNBVG
 const salt=Buffer.alloc(16,17),key=Buffer.alloc(32,23),authConfig=JSON.stringify({v:1,salt:salt.toString('hex'),verifier:crypto.pbkdf2Sync(pw,salt,600000,32,'sha256').toString('hex'),sessionKey:key.toString('hex'),totp:seed});
 const fixture={asOf:'2026-11-27',github:[{name:'PRIVATE_TEST_RECORD <script>',account:'test',status:'private',url:'https://github.com/example/example'}],vercel:[],supabase:[],products:[{name:'Test project',status:'test',next:'test only',links:[{label:'dangerous',url:'javascript:alert(1)'}]}]};
 function fresh(configured=true){
- for(const k of ['WAJHAT_ADMIN_AUTH','WAJHAT_ADMIN_INVENTORY'])delete process.env[k];
+ for(const k of ['WAJHAT_ADMIN_AUTH','WAJHAT_ADMIN_INVENTORY','WAJHAT_ADMIN_PASSWORD'])delete process.env[k];
  process.env.WAJHAT_ADMIN_INVENTORY=JSON.stringify(fixture);
  if(configured)process.env.WAJHAT_ADMIN_AUTH=authConfig
  delete require.cache[mod];return require(mod);
@@ -44,3 +44,15 @@ test('short or malformed salt remains fail closed',()=>{
   assert.equal(call(h).statusCode,503);
  }
 });
+
+test('owner password rotation retains OTP, denies old password and invalidates existing cookies',()=>{
+ const h=fresh(),cookie=login(h),next='new-synthetic-password-fixture-1234',s=Buffer.alloc(16,55);
+ process.env.WAJHAT_ADMIN_PASSWORD=JSON.stringify({v:1,salt:s.toString('hex'),verifier:crypto.pbkdf2Sync(next,s,600000,32,'sha256').toString('hex')});
+ assert.doesNotMatch(call(h,{headers:{cookie}}).body,/PRIVATE_TEST_RECORD/);
+ assert.equal(call(h,{method:'POST',headers:formHeaders,body:auth()}).statusCode,401);
+ assert.equal(call(h,{method:'POST',headers:formHeaders,body:{...auth(),password:next,otp:'bad'}}).statusCode,401);
+ const r=call(h,{method:'POST',headers:formHeaders,body:{...auth(),password:next}});
+ assert.equal(r.statusCode,303);
+ assert.match(call(h,{headers:{cookie:r.headers['set-cookie'].split(';')[0]}}).body,/PRIVATE_TEST_RECORD/);
+});
+test('invalid password rotation fails closed',()=>{const h=fresh();process.env.WAJHAT_ADMIN_PASSWORD='invalid';assert.equal(call(h).statusCode,503)});
