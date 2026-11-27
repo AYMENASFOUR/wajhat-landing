@@ -11,8 +11,8 @@ function base32(s){
  for(const ch of s){n=(n<<5)|'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567'.indexOf(ch);bits+=5;if(bits>=8){bits-=8;bytes.push((n>>bits)&255);n&=(1<<bits)-1}}
  if(n!==0)return null;return Buffer.from(bytes);
 }
-function config(){
- const fail=reason=>{console.warn('WAJHAT_ADMIN_CONFIG_CHECK: '+reason);return null};
+function config(res){
+ const fail=reason=>{console.warn('WAJHAT_ADMIN_CONFIG_CHECK: '+reason);if(res && process.env.VERCEL_ENV!=='production')res.setHeader('X-Wajhat-Setup-Status',reason);return null};
  const raw=process.env.WAJHAT_ADMIN_AUTH;
  if(typeof raw!=='string'||!raw.trim())return fail('missing');
  try{
@@ -94,7 +94,7 @@ function parse(req){
  if(req.body&&typeof req.body==='object'&&!Buffer.isBuffer(req.body))return req.body;return null;
 }
 function handler(req,res){
- headers(res);const cfg=config();
+ headers(res);const cfg=config(res);
  if(!cfg)return send(res,503,shell('<section class="panel login"><h1>لوحة الإدارة غير مفعلة</h1><p>يجب إكمال إعداد بيانات المصادقة على الخادم أولًا. لا تُعرض أي بيانات قبل التفعيل.</p></section>'));
  if(req.method==='GET'||req.method==='HEAD')return send(res,200,req.method==='HEAD'?'':verify(cfg.key,cookie(req))?dashboard(readInventory()):login());
  if(req.method!=='POST'){res.setHeader('Allow','GET, HEAD, POST');return send(res,405,shell('<p>الطلب غير مسموح.</p>'))}
