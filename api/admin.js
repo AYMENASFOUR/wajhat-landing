@@ -12,12 +12,19 @@ function base32(s){
  if(n!==0)return null;return Buffer.from(bytes);
 }
 function config(){
+ const fail=reason=>{console.warn('WAJHAT_ADMIN_CONFIG_CHECK: '+reason);return null};
+ const raw=process.env.WAJHAT_ADMIN_AUTH;
+ if(typeof raw!=='string'||!raw.trim())return fail('missing');
  try{
- const v=JSON.parse(process.env.WAJHAT_ADMIN_AUTH||'null');
- if(!v||v.v!==1||!(/^[a-f0-9]{32}$/.test(v.salt))||!(/^[a-f0-9]{64}$/.test(v.verifier))||!(/^[a-f0-9]{64}$/.test(v.sessionKey))||!(/^[A-Z2-7]{32}$/.test(v.totp)))return null;
- const secret=base32(v.totp);if(!secret)return null;
+ const v=JSON.parse(raw.trim().replace(/^\uFEFF/,''));
+ if(!v||v.v!==1)return fail('version_or_structure');
+ if(typeof v.salt!=='string'||!(/^[a-f0-9]{32}$/.test(v.salt)))return fail('salt_format');
+ if(typeof v.verifier!=='string'||!(/^[a-f0-9]{64}$/.test(v.verifier)))return fail('verifier_format');
+ if(typeof v.sessionKey!=='string'||!(/^[a-f0-9]{64}$/.test(v.sessionKey)))return fail('session_key_format');
+ if(typeof v.totp!=='string'||!(/^[A-Z2-7]{32}$/.test(v.totp)))return fail('totp_format');
+ const secret=base32(v.totp);if(!secret)return fail('totp_decode');
  return {salt:Buffer.from(v.salt,'hex'),verifier:Buffer.from(v.verifier,'hex'),secret,key:Buffer.from(v.sessionKey,'hex')};
- }catch{return null}
+ }catch{return fail('invalid_json')}
 }
 function validPassword(cfg,password){
  const derived=crypto.pbkdf2Sync(password,cfg.salt,600000,32,'sha256');
