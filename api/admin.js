@@ -19,7 +19,10 @@ function config(res){
  const v=JSON.parse(raw.trim().replace(/^\uFEFF/,''));
  if(!v||v.v!==1)return fail('version_or_structure');
  if(typeof v.salt!=='string')return fail('salt_not_string');
- if(!(/^[a-fA-F0-9]{32}$/.test(v.salt)))return fail(v.salt.length===32?'salt_non_hex':v.salt.length===24?'salt_length_24':v.salt.length===22?'salt_length_22':v.salt.length===64?'salt_length_64':'salt_other_length');
+ if(!(/^[a-fA-F0-9]{32}$/.test(v.salt))) {
+  const lengths=['salt','verifier','sessionKey','totp'].map(k=>typeof v[k]==='string'?Math.min(v[k].length,999):'missing').join('_');
+  return fail('format_lengths_'+lengths);
+ }
  if(typeof v.verifier!=='string'||!(/^[a-fA-F0-9]{64}$/.test(v.verifier)))return fail('verifier_format');
  if(typeof v.sessionKey!=='string'||!(/^[a-fA-F0-9]{64}$/.test(v.sessionKey)))return fail('session_key_format');
  if(typeof v.totp!=='string'||!(/^[A-Z2-7]{32}$/.test(v.totp)))return fail('totp_format');
