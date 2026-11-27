@@ -21,8 +21,13 @@ function config(res){
  if(typeof v.salt!=='string')return fail('salt_not_string');
  // Accept canonical hexadecimal salts of 16–32 bytes and explicit hex prefix.
  // Never truncate the salt or guess its bytes.
- const saltHex=v.salt.trim().replace(/^0x/i,'');
- if(!/^(?:[a-fA-F0-9]{2}){16,32}$/.test(saltHex))return fail('salt_format');
+ let saltHex=v.salt.trim();
+ if(/^(?:"[a-fA-F0-9]+"|'[a-fA-F0-9]+')$/.test(saltHex))saltHex=saltHex.slice(1,-1);
+ saltHex=saltHex.replace(/^0x/i,'');
+ if(!/^(?:[a-fA-F0-9]{2}){16,32}$/.test(saltHex)){
+ const count=(saltHex.match(/[a-fA-F0-9]/g)||[]).length;
+ return fail('salt_invalid_hex_count_'+Math.min(count,999)+'_length_'+Math.min(saltHex.length,999));
+ }
  if(typeof v.verifier!=='string'||!(/^[a-fA-F0-9]{64}$/.test(v.verifier)))return fail('verifier_format');
  if(typeof v.sessionKey!=='string'||!(/^[a-fA-F0-9]{64}$/.test(v.sessionKey)))return fail('session_key_format');
  if(typeof v.totp!=='string'||!(/^[A-Z2-7]{32}$/.test(v.totp)))return fail('totp_format');
