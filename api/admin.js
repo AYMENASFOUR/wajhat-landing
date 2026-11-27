@@ -19,15 +19,15 @@ function config(res){
  const v=JSON.parse(raw.trim().replace(/^\uFEFF/,''));
  if(!v||v.v!==1)return fail('version_or_structure');
  if(typeof v.salt!=='string')return fail('salt_not_string');
- if(!(/^[a-fA-F0-9]{32}$/.test(v.salt))) {
-  const lengths=['salt','verifier','sessionKey','totp'].map(k=>typeof v[k]==='string'?Math.min(v[k].length,999):'missing').join('_');
-  return fail('format_lengths_'+lengths);
- }
+ // Accept canonical hexadecimal salts of 16–32 bytes and explicit hex prefix.
+ // Never truncate the salt or guess its bytes.
+ const saltHex=v.salt.trim().replace(/^0x/i,'');
+ if(!/^(?:[a-fA-F0-9]{2}){16,32}$/.test(saltHex))return fail('salt_format');
  if(typeof v.verifier!=='string'||!(/^[a-fA-F0-9]{64}$/.test(v.verifier)))return fail('verifier_format');
  if(typeof v.sessionKey!=='string'||!(/^[a-fA-F0-9]{64}$/.test(v.sessionKey)))return fail('session_key_format');
  if(typeof v.totp!=='string'||!(/^[A-Z2-7]{32}$/.test(v.totp)))return fail('totp_format');
  const secret=base32(v.totp);if(!secret)return fail('totp_decode');
- return {salt:Buffer.from(v.salt,'hex'),verifier:Buffer.from(v.verifier,'hex'),secret,key:Buffer.from(v.sessionKey,'hex')};
+ return {salt:Buffer.from(saltHex,'hex'),verifier:Buffer.from(v.verifier,'hex'),secret,key:Buffer.from(v.sessionKey,'hex')};
  }catch{return fail('invalid_json')}
 }
 function validPassword(cfg,password){
