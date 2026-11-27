@@ -1,0 +1,17 @@
+name: Admin security checks
+on:
+  push:
+    branches: [chatgpt/admin-control-center]
+  pull_request:
+    branches: [main]
+permissions:
+  contents: read
+jobs:
+  security:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364b2e0c0b4b
+        with:
+          persist-credentials: false
+      - run: node --test .github/tests/admin.test.cjs
