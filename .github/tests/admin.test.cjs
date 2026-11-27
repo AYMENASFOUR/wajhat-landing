@@ -28,3 +28,19 @@ test('cross-origin login and unsupported methods denied',()=>{const h=fresh();as
 test('tampered or expired cookie is denied',()=>{const h=fresh(),cookie=login(h);const tampered=cookie.slice(0,-1)+(cookie.endsWith('A')?'B':'A');assert.doesNotMatch(call(h,{headers:{cookie:tampered}}).body,/PRIVATE_TEST_RECORD/);const now=Math.floor(Date.now()/1000);const payload=Buffer.from(JSON.stringify({v:1,iat:now-901,exp:now-1,n:'a'.repeat(32)})).toString('base64url');const sig=crypto.createHmac('sha256',key).update(payload).digest('base64url');assert.doesNotMatch(call(h,{headers:{cookie:'__Host-wajhat_admin='+payload+'.'+sig}}).body,/PRIVATE_TEST_RECORD/)});
 test('logout clears cookie, POST without correct origin denied',()=>{const h=fresh(),cookie=login(h);const r=call(h,{method:'POST',headers:{...formHeaders,cookie},body:{action:'logout'}});assert.equal(r.statusCode,303);assert.match(r.headers['set-cookie'],/Max-Age=0/);assert.equal(call(h,{method:'POST',headers:{cookie},body:{action:'logout'}}).statusCode,403)});
 test('per-instance throttle denies sixth attempt',()=>{const h=fresh();for(let i=0;i<5;i++)assert.equal(call(h,{method:'POST',headers:formHeaders,body:{...auth(),password:'wrong'}}).statusCode,401);assert.equal(call(h,{method:'POST',headers:formHeaders,body:auth()}).statusCode,429)});
+
+test('explicit hex prefix and valid longer salt preserve exact PBKDF2 bytes',()=>{
+ for(const [raw,encoded] of [[salt,'0x'+salt.toString('hex')],[Buffer.alloc(17,41),Buffer.alloc(17,41).toString('hex')]]){
+  const h=fresh(),v=JSON.parse(authConfig);
+  v.salt=encoded;v.verifier=crypto.pbkdf2Sync(pw,raw,600000,32,'sha256').toString('hex');
+  process.env.WAJHAT_ADMIN_AUTH=JSON.stringify(v);
+  assert.equal(call(h).statusCode,200);
+  assert.match(call(h,{headers:{cookie:login(h)}}).body,/PRIVATE_TEST_RECORD/);
+ }
+});
+test('short or malformed salt remains fail closed',()=>{
+ const h=fresh(),v=JSON.parse(authConfig);for(const invalid of ['00','z'+salt.toString('hex')+'z']){
+  v.salt=invalid;process.env.WAJHAT_ADMIN_AUTH=JSON.stringify(v);
+  assert.equal(call(h).statusCode,503);
+ }
+});
