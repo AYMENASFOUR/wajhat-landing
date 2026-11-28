@@ -133,3 +133,17 @@ test('reject ambiguous, oversized and malformed request bodies before authentica
  }
  const r=call(h,{method:'POST',headers:{...formHeaders,'content-length':'NaN'},body:auth()});assert.equal(r.statusCode,400);
 });
+
+test('dashboard navigation, local search and server-anchored countdown behavior',()=>{
+ const h=fresh(),owner=call(h,{headers:{cookie:login(h)}}),script=owner.body.match(/<script>([\s\S]*?)<\/script>/)[1];
+ const empty={hidden:true},rows=[{textContent:'Alpha مشروع',hidden:false},{textContent:'Beta خاص',hidden:false}];
+ const view=(name,records)=>({dataset:{view:name},hidden:false,querySelectorAll:()=>records,querySelector:()=>empty});
+ const views=[view('overview',rows),view('github',[{textContent:'Repository',hidden:false}])];
+ const nav=views.map(v=>({dataset:{nav:v.dataset.view},setAttribute(k,v){this[k]=v},removeAttribute(k){delete this[k]}}));
+ const root={querySelectorAll:s=>s==='[data-view]'?views:nav},listeners={},search={value:'',addEventListener(n,f){listeners[n]=f}},count={},session={dataset:{expires:'1900',serverNow:'1000'}},loc={hash:'',replace(p){this.redirect=p}};let elapsed=0,tick;
+ require('node:vm').runInNewContext(script,{document:{getElementById:id=>({'workspace':root,'inventory-search':search,'inventory-count':count,'session-time':session}[id])},location:loc,window:{addEventListener(n,f){listeners[n]=f}},performance:{now:()=>elapsed},setInterval:f=>{tick=f;return 1},clearInterval(){}});
+ assert.equal(views[0].hidden,false);assert.equal(views[1].hidden,true);assert.equal(nav[0]['aria-current'],'page');
+ search.value='beta';listeners.input();assert.equal(rows[0].hidden,true);assert.equal(rows[1].hidden,false);assert.equal(count.textContent,'1 / 2');
+ loc.hash='#github';listeners.hashchange();assert.equal(views[1].hidden,false);assert.equal(views[0].hidden,true);assert.equal(search.value,'');assert.equal(nav[1]['aria-current'],'page');
+ assert.match(session.textContent,/15:00/);elapsed=901000;tick();assert.equal(loc.redirect,'/admin');
+});
