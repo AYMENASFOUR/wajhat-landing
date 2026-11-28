@@ -94,3 +94,18 @@ test('Arabic and Persian OTP digits are normalized without changing password',()
   assert.equal(r.statusCode,303);
  }
 });
+
+test('public home exposes only a developer navigation link; admin retains protected content and home navigation',()=>{
+ const page=require('node:fs').readFileSync(require('node:path').join(__dirname,'../../index.html'),'utf8');
+ const footer=page.match(/<footer>[\s\S]*?<\/footer>/)[0];
+ assert.match(footer,/<a class="developer-entry" href="\/admin" rel="nofollow"/);
+ assert.match(footer,/دخول المطور/);
+ assert.doesNotMatch(page,/WAJHAT_ADMIN_AUTH|WAJHAT_ADMIN_PASSWORD|WAJHAT_ADMIN_INVENTORY|PRIVATE_TEST_RECORD/);
+ const h=fresh(),guest=call(h);
+ assert.match(guest.body,/class="btn home-link" href="\/"/);
+ assert.doesNotMatch(guest.body,/PRIVATE_TEST_RECORD|تسجيل الخروج/);
+ const session=login(h),owner=call(h,{headers:{cookie:session}});
+ assert.match(owner.body,/class="btn home-link" href="\/"/);
+ assert.match(owner.body,/تسجيل الخروج/);
+ assert.match(owner.body,/PRIVATE_TEST_RECORD/);
+});
