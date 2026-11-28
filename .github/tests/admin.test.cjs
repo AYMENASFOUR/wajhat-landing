@@ -75,10 +75,17 @@ test('password visibility toggle has a narrowly scoped CSP hash and never submit
  const hash=crypto.createHash('sha256').update(script).digest('base64');
  assert.ok(r.headers['content-security-policy'].includes("script-src 'sha256-"+hash+"'"));
  assert.ok(!r.headers['content-security-policy'].includes("script-src 'unsafe-inline'"));
- const listeners={},pwField={type:'password'},button={hidden:true,textContent:'إظهار',setAttribute(){},addEventListener(n,fn){listeners[n]=fn}},otpField={value:'',addEventListener(n,fn){listeners[n]=fn}};
- require('node:vm').runInNewContext(script,{document:{getElementById:id=>({'pw':pwField,'pw-toggle':button,'otp':otpField}[id])}});
+
+ const listeners={},pwField={type:'password',value:'',focus(){}},button={hidden:true,textContent:'إظهار',setAttribute(){},addEventListener(n,fn){listeners[n]=fn}},otpField={value:'',focus(){},addEventListener(n,fn){listeners[n]=fn}},form={addEventListener(n,fn){listeners[n]=fn}},submit={setAttribute(){},removeAttribute(){}},status={hidden:true};
+ require('node:vm').runInNewContext(script,{document:{getElementById:id=>({'pw':pwField,'pw-toggle':button,'otp':otpField,'owner-login':form,'login-submit':submit,'login-status':status}[id])},window:{addEventListener(){}}});
  assert.equal(button.hidden,false);listeners.click();assert.equal(pwField.type,'text');listeners.click();assert.equal(pwField.type,'password');
- otpField.value='١٢٣۴۵۶';listeners.input();assert.equal(otpField.value,'123456');
+ otpField.value='١٢٣ ۴۵۶';listeners.input();assert.equal(otpField.value,'123456');
+ let prevented=false;const event={preventDefault(){prevented=true}};
+ listeners.submit(event);assert.equal(prevented,true);assert.match(status.textContent,/كلمة المرور/);
+ pwField.value='synthetic-password';otpField.value='12';prevented=false;listeners.submit(event);assert.equal(prevented,true);assert.match(status.textContent,/6 أرقام/);
+ otpField.value='123456';prevented=false;listeners.submit(event);assert.equal(prevented,false);assert.match(status.textContent,/التحقق/);assert.equal(submit.textContent,'جارٍ التحقق…');
+ prevented=false;listeners.submit(event);assert.equal(prevented,true);
+
 });
 test('Arabic and Persian OTP digits are normalized without changing password',()=>{
  for(const base of [0x660,0x6f0]){
