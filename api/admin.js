@@ -12,7 +12,7 @@ function base32(s){
  if(n!==0)return null;return Buffer.from(bytes);
 }
 function config(res){
- const fail=reason=>{console.warn('WAJHAT_ADMIN_CONFIG_CHECK: '+reason);if(res && process.env.VERCEL_ENV!=='production')res.setHeader('X-Wajhat-Setup-Status',reason);return null};
+ const fail=reason=>{console.warn('WAJHAT_ADMIN_CONFIG_CHECK: '+reason);return null};
  const raw=process.env.WAJHAT_ADMIN_AUTH;
  if(typeof raw!=='string'||!raw.trim())return fail('missing');
  try{
@@ -25,8 +25,7 @@ function config(res){
  if(/^(?:"[a-fA-F0-9]+"|'[a-fA-F0-9]+')$/.test(saltHex))saltHex=saltHex.slice(1,-1);
  saltHex=saltHex.replace(/^0x/i,'');
  if(!/^(?:[a-fA-F0-9]{2}){16,32}$/.test(saltHex)){
- const count=(saltHex.match(/[a-fA-F0-9]/g)||[]).length;
- return fail('salt_invalid_hex_count_'+Math.min(count,999)+'_length_'+Math.min(saltHex.length,999));
+ return fail('salt_format');
  }
  if(typeof v.verifier!=='string'||!(/^[a-fA-F0-9]{64}$/.test(v.verifier)))return fail('verifier_format');
  if(typeof v.sessionKey!=='string'||!(/^[a-fA-F0-9]{64}$/.test(v.sessionKey)))return fail('session_key_format');
