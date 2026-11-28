@@ -56,3 +56,13 @@ test('owner password rotation retains OTP, denies old password and invalidates e
  assert.match(call(h,{headers:{cookie:r.headers['set-cookie'].split(';')[0]}}).body,/PRIVATE_TEST_RECORD/);
 });
 test('invalid password rotation fails closed',()=>{const h=fresh();process.env.WAJHAT_ADMIN_PASSWORD='invalid';assert.equal(call(h).statusCode,503)});
+
+test('browser form referrer policy preserves same-origin POST, blocks foreign or opaque origins',()=>{
+ const h=fresh(),get=call(h);
+ assert.equal(get.headers['referrer-policy'],'same-origin');
+ for(const origin of ['null','https://evil.example',undefined]){
+  const r=call(h,{method:'POST',headers:{...formHeaders,origin},body:auth()});
+  assert.equal(r.statusCode,403);assert.equal(r.headers['set-cookie'],undefined);
+ }
+ assert.equal(call(h,{method:'POST',headers:formHeaders,body:auth()}).statusCode,303);
+});
