@@ -66,3 +66,24 @@ test('browser form referrer policy preserves same-origin POST, blocks foreign or
  }
  assert.equal(call(h,{method:'POST',headers:formHeaders,body:auth()}).statusCode,303);
 });
+
+test('password visibility toggle has a narrowly scoped CSP hash and never submits the form',()=>{
+ const r=call(fresh());
+ assert.match(r.body,/id="pw" type="password"/);
+ assert.match(r.body,/id="pw-toggle" type="button" aria-controls="pw"/);
+ const script=r.body.match(/<script>([\s\S]*?)<\/script>/)[1];
+ const hash=crypto.createHash('sha256').update(script).digest('base64');
+ assert.ok(r.headers['content-security-policy'].includes("script-src 'sha256-"+hash+"'"));
+ assert.ok(!r.headers['content-security-policy'].includes("script-src 'unsafe-inline'"));
+ const listeners={},pwField={type:'password'},button={hidden:true,textContent:'إظهار',setAttribute(){},addEventListener(n,fn){listeners[n]=fn}},otpField={value:'',addEventListener(n,fn){listeners[n]=fn}};
+ require('node:vm').runInNewContext(script,{document:{getElementById:id=>({'pw':pwField,'pw-toggle':button,'otp':otpField}[id])}});
+ assert.equal(button.hidden,false);listeners.click();assert.equal(pwField.type,'text');listeners.click();assert.equal(pwField.type,'password');
+ otpField.value='١٢٣۴۵۶';listeners.input();assert.equal(otpField.value,'123456');
+});
+test('Arabic and Persian OTP digits are normalized without changing password',()=>{
+ for(const base of [0x660,0x6f0]){
+  const h=fresh(),localized=otp().replace(/[0-9]/g,d=>String.fromCharCode(base+Number(d)));
+  const r=call(h,{method:'POST',headers:formHeaders,body:{...auth(),otp:localized}});
+  assert.equal(r.statusCode,303);
+ }
+});
