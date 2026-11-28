@@ -109,3 +109,27 @@ test('public home exposes only a developer navigation link; admin retains protec
  assert.match(owner.body,/تسجيل الخروج/);
  assert.match(owner.body,/PRIVATE_TEST_RECORD/);
 });
+
+test('commercial dashboard remains owner-only and includes private navigation and expiry',()=>{
+ const h=fresh(),guest=call(h);assert.doesNotMatch(guest.body,/id="workspace"|PRIVATE_TEST_RECORD/);
+ const session=login(h),owner=call(h,{headers:{cookie:session}});
+ assert.match(owner.body,/id="workspace"/);assert.match(owner.body,/data-view="overview"/);
+ assert.match(owner.body,/data-view="github"/);assert.match(owner.body,/id="inventory-search"/);
+ assert.match(owner.body,/v2\.0\.0/);
+ const expiry=Number(owner.body.match(/data-expires="(\d+)"/)[1]);
+ assert.ok(expiry>Math.floor(Date.now()/1000));assert.ok(expiry<=Math.floor(Date.now()/1000)+900);
+ const script=owner.body.match(/<script>([\s\S]*?)<\/script>/)[1];
+ const hash=crypto.createHash('sha256').update(script).digest('base64');
+ assert.ok(owner.headers['content-security-policy'].includes("'sha256-"+hash+"'"));
+ assert.doesNotMatch(script,/fetch\(|localStorage|sessionStorage/);
+ assert.equal(owner.headers['strict-transport-security'],'max-age=31536000');
+ assert.equal(owner.headers['cross-origin-opener-policy'],'same-origin');
+ assert.equal(owner.headers['cross-origin-resource-policy'],'same-origin');
+});
+test('reject ambiguous, oversized and malformed request bodies before authentication',()=>{
+ const h=fresh();
+ for(const body of ['action=login&action=logout','action=login&password=x&otp=123456&unexpected=y',{action:'login',password:['x'],otp:'123456'},{action:'login',password:'😀'.repeat(1200),otp:'123456'},{action:'logout',password:'x'}]){
+  const r=call(h,{method:'POST',headers:formHeaders,body});assert.equal(r.statusCode,400);assert.equal(r.headers['set-cookie'],undefined);
+ }
+ const r=call(h,{method:'POST',headers:{...formHeaders,'content-length':'NaN'},body:auth()});assert.equal(r.statusCode,400);
+});
